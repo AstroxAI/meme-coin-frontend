@@ -3,10 +3,22 @@ import { verifyBearerToken, relayerGet, relayerPost, getBaseUrl } from "@/lib/mc
 
 export const runtime = "nodejs";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept",
+  "Access-Control-Expose-Headers": "WWW-Authenticate",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS });
+}
+
 function unauthorized(base: string) {
   return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
     status: 401,
     headers: {
+      ...CORS,
       "Content-Type": "application/json",
       "WWW-Authenticate": `Bearer resource_metadata="${base}/.well-known/oauth-protected-resource"`,
     },
